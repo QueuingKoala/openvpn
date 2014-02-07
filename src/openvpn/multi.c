@@ -1402,6 +1402,13 @@ multi_select_virtual_addr (struct multi_context *m, struct multi_instance *mi)
 static void
 multi_set_virtual_addr_env (struct multi_context *m, struct multi_instance *mi)
 {
+  const bool have_v6 = mi->context.c2.push_ifconfig_ipv6_defined;
+
+  if (have_v6)
+    {
+      setenv_del (mi->context.c2.es, "ifconfig_ipv6_pool_local_ip");
+      setenv_del (mi->context.c2.es, "ifconfig_ipv6_pool_remote_ip");
+    }
   setenv_del (mi->context.c2.es, "ifconfig_pool_local_ip");
   setenv_del (mi->context.c2.es, "ifconfig_pool_remote_ip");
   setenv_del (mi->context.c2.es, "ifconfig_pool_netmask");
@@ -1416,12 +1423,28 @@ multi_set_virtual_addr_env (struct multi_context *m, struct multi_instance *mi)
 			mi->context.c2.push_ifconfig_local,
 			SA_SET_IF_NONZERO);
 
+      if (have_v6)
+        {
+          setenv_in6_addr (mi->context.c2.es,
+                "ifconfig_ipv6_pool_remote_ip",
+                mi->context.c2.push_ifconfig_ipv6_local,
+                SA_SET_IF_NONZERO);
+        }
+
       if (tunnel_type == DEV_TYPE_TAP || (tunnel_type == DEV_TYPE_TUN && tunnel_topology == TOP_SUBNET))
 	{
 	  setenv_in_addr_t (mi->context.c2.es,
 			    "ifconfig_pool_netmask",
 			    mi->context.c2.push_ifconfig_remote_netmask,
 			    SA_SET_IF_NONZERO);
+
+    if (have_v6)
+      {
+        setenv_int (mi->context.c2.es,
+              "ifconfig_ipv6_pool_netbits",
+              mi->context.c2.push_ifconfig_ipv6_netbits);
+      }
+
 	}
       else if (tunnel_type == DEV_TYPE_TUN)
 	{
@@ -1429,6 +1452,14 @@ multi_set_virtual_addr_env (struct multi_context *m, struct multi_instance *mi)
 			    "ifconfig_pool_local_ip",
 			    mi->context.c2.push_ifconfig_remote_netmask,
 			    SA_SET_IF_NONZERO);
+
+    if (have_v6)
+      {
+        setenv_in6_addr (mi->context.c2.es,
+              "push_ifconfig_ipv6_remote",
+              mi->context.c2.push_ifconfig_ipv6_remote,
+              SA_SET_IF_NONZERO);
+      }
 	}
     }
 
