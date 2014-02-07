@@ -1408,6 +1408,7 @@ multi_set_virtual_addr_env (struct multi_context *m, struct multi_instance *mi)
     {
       setenv_del (mi->context.c2.es, "ifconfig_ipv6_pool_local_ip");
       setenv_del (mi->context.c2.es, "ifconfig_ipv6_pool_remote_ip");
+      setenv_del (mi->context.c2.es, "ifconfig_ipv6_pool_netbits");
     }
   setenv_del (mi->context.c2.es, "ifconfig_pool_local_ip");
   setenv_del (mi->context.c2.es, "ifconfig_pool_remote_ip");
@@ -1456,7 +1457,7 @@ multi_set_virtual_addr_env (struct multi_context *m, struct multi_instance *mi)
     if (have_v6)
       {
         setenv_in6_addr (mi->context.c2.es,
-              "push_ifconfig_ipv6_remote",
+              "push_ifconfig_ipv6_local_ip",
               mi->context.c2.push_ifconfig_ipv6_remote,
               SA_SET_IF_NONZERO);
       }
