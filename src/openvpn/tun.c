@@ -1207,10 +1207,11 @@ do_ifconfig (struct tuntap *tt,
 
 	/* example: netsh interface ipv6 set address MyTap 2001:608:8003::d store=active */
 	argv_printf (&argv,
-		    "%s%sc interface ipv6 set address %s %s store=active",
+		    "%s%sc interface ipv6 set address %s/%d %s store=active",
 		     get_win_sys_path(),
 		     NETSH_PATH_SUFFIX,
 		     actual,
+		     tt->netbits_ipv6,
 		     ifconfig_ipv6_local );
 
 	netsh_command (&argv, 4);
